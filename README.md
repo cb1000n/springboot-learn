@@ -1,37 +1,40 @@
 # springboot-learn
 
-#### 介绍
+## 介绍
 springboot 学习
 
-#### 软件架构
-软件架构说明
+## 新建springboot-learn项目
+
+**新建父项目** `springboot-learn`
+
+![image-20210121160342751](README.assets/image-20210121160342751.png)
+
+![image-20210122210954492](README.assets/image-20210122210954492.png)
+
+![image-20210122211112354](README.assets/image-20210122211112354.png)
+
+![image-20210122211415731](README.assets/image-20210122211415731.png)
+
+![image-20210122211741026](README.assets/image-20210122211741026.png)
 
 
-#### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+![image-20210122211848905](README.assets/image-20210122211848905.png)
 
-#### 使用说明
+**然后把版本改成**`2.1.0`，因为高版本对其他的框架有不兼容的。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+![image-20210122212353240](README.assets/image-20210122212353240.png)
 
-#### 参与贡献
+运行测试报错：
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+![image-20210122212556936](README.assets/image-20210122212556936.png)
 
+高版本的 单元测试包，和低版本的不是同一个。所以我们把 `test`包也改下
 
-#### 特技
+![image-20210122212849200](README.assets/image-20210122212849200.png)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+运行测试如图
+
+![image-20210122213012305](README.assets/image-20210122213012305.png)
+
+服务已经开启。
