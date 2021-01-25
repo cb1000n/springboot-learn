@@ -3,38 +3,61 @@
 ## 介绍
 springboot 学习
 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <module>swagger-learn</module>
+    </modules>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.0.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.zhang</groupId>
+    <artifactId>springboot-learn</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>springboot-learn</name>
+    <description>springboot learn</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+
+
 ## 新建springboot-learn项目
 
-**新建父项目** `springboot-learn`
-
-![image-20210121160342751](README.assets/image-20210121160342751.png)
-
-![image-20210122210954492](README.assets/image-20210122210954492.png)
-
-![image-20210122211112354](README.assets/image-20210122211112354.png)
-
-![image-20210122211415731](README.assets/image-20210122211415731.png)
-
-![image-20210122211741026](README.assets/image-20210122211741026.png)
-
-
-
-![image-20210122211848905](README.assets/image-20210122211848905.png)
-
-**然后把版本改成**`2.1.0`，因为高版本对其他的框架有不兼容的。
-
-![image-20210122212353240](README.assets/image-20210122212353240.png)
-
-运行测试报错：
-
-![image-20210122212556936](README.assets/image-20210122212556936.png)
-
-高版本的 单元测试包，和低版本的不是同一个。所以我们把 `test`包也改下
-
-![image-20210122212849200](README.assets/image-20210122212849200.png)
-
-运行测试如图
-
-![image-20210122213012305](README.assets/image-20210122213012305.png)
-
-服务已经开启。
+**新建父项目** `springboot-learn
