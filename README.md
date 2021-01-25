@@ -3,61 +3,24 @@
 ## 介绍
 springboot 学习
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
-    
-    <modules>
-        <module>swagger-learn</module>
-    </modules>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.0.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
-    <groupId>com.zhang</groupId>
-    <artifactId>springboot-learn</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>springboot-learn</name>
-    <description>springboot learn</description>
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
-```
-
-
-
 ## 新建springboot-learn项目
 
-**新建父项目** `springboot-learn
+**新建项目** `springboot-learn`
+
+![image-20210125200001462](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125200001462.png)
+
+![image-20210125204309925](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125204309925.png)
+
+![image-20210125204359545](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125204359545.png)
+
+![image-20210125204719541](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125204803751.png)
+
+![image-20210125204803751](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125204719541.png)
+
+![image-20210125205107747](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125205107747.png)
+
+至此`springboot-learn`项目已经创建完毕
+
+效果如图：服务已经正常启动！
+
+![image-20210125205356618](http://drawing-bed.oss-cn-beijing.aliyuncs.com/img/image-20210125205356618.png)
