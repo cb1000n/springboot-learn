@@ -81,6 +81,274 @@ http://localhost:15672/
 配置如下
 
 ```yml
+spring:
+  rabbitmq:
+    host: 106.54.139.107
+    port: 5672
+    username: guest
+    password: guest
+```
 
+## 测试代码如下
+
+新建测试类`src/test/java/com/zhang/test/TestRabbitMQ.java`
+
+内容如下
+
+```java
+import com.zhang.RabbitmqLearnApplication;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+/**
+ * ClassName TestRabbitMQ
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 14:49
+ */
+@SpringBootTest(classes = RabbitmqLearnApplication.class)
+@RunWith(SpringRunner.class)
+public class TestRabbitMQ {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    // hello world
+    @Test
+    public void testHello() {
+        rabbitTemplate.convertAndSend("hello", "hello world");
+    }
+
+    // work 默认轮询
+    @Test
+    public void testWork() {
+        for (int i = 0; i < 10; i++) {
+            rabbitTemplate.convertAndSend("work", "work 模型"+i);
+        }
+    }
+
+    // fanout 广播
+    @Test
+    public void testFanout() {
+        rabbitTemplate.convertAndSend("logs", "", "Fanout 模型发送的消息");
+    }
+
+    // route 广播
+    @Test
+    public void testRoute() {
+        rabbitTemplate.convertAndSend("directs", "info", "Route 模型发送的消息");
+    }
+
+    // topic 广播
+    @Test
+    public void testTopic() {
+        rabbitTemplate.convertAndSend("topics", "user.save", "user.save 路由消息");
+    }
+}
+```
+
+响应的消费者类`src/main/java/com/zhang/hello/HelloCustomer.java`
+
+```java
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * ClassName HelloCustomer
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 14:53
+ */
+@Component
+/*
+@RabbitListener(queuesToDeclare = @Queue(value = "hello", durable = "false", autoDelete = "true"))
+
+@RabbitListener 队列监听者 | 消费者
+queuesToDeclare 配置队列信息，如果不存在则新建
+value 队列名
+durable 是否持久化
+autoDelete 是否自动删除
+
+默认创建的就是 持久化、非独占、不自动删除的队列
+ */
+@RabbitListener(queuesToDeclare = @Queue(value = "hello"))
+public class HelloCustomer {
+
+    @RabbitHandler
+    public void receive1(String message) {
+        System.out.println("---------------------hello---------------------");
+        System.out.println("message = " + message);
+    }
+}
+```
+
+`src/main/java/com/zhang/work/WorkCustomer.java`
+
+```java
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * ClassName WorkCustomer
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 16:33
+ */
+@Component
+public class WorkCustomer {
+
+    @RabbitListener(queuesToDeclare = @Queue("work"))
+    public void receive1 (String message) {
+        System.out.println("message1 = " + message);
+
+    }
+
+    @RabbitListener(queuesToDeclare = @Queue("work"))
+    public void receive2 (String message) {
+        System.out.println("message2 = " + message);
+
+    }
+}
+```
+
+`src/main/java/com/zhang/fanout/FanoutCustomer.java`
+
+```java
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * ClassName FanoutCustomer
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 16:39
+ */
+@Component
+public class FanoutCustomer {
+
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(value = "logs", type = "fanout") // 绑定的交换机
+            )
+    })
+    public void receive1(String message) {
+        System.out.println("message1 " + message);
+    }
+
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(value = "logs", type = "fanout") // 绑定的交换机
+            )
+    })
+    public void receive2(String message) {
+        System.out.println("message2 " + message);
+    }
+}
+```
+
+`src/main/java/com/zhang/route/RouteCustomer.java`
+
+```java
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * ClassName RouteCustomer
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 16:45
+ */
+@Component
+public class RouteCustomer {
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(value = "directs", type = "direct"), // 绑定的交换机
+                    key = {"info", "error", "warn"}
+            )
+    })
+    public void receive1(String message) {
+        System.out.println("message1 " + message);
+    }
+
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(value = "directs", type = "direct"), // 绑定的交换机
+                    key = {"error"}
+            )
+    })
+    public void receive2(String message) {
+        System.out.println("message2 " + message);
+    }
+}
+```
+
+`src/main/java/com/zhang/topic/TopicCustomer.java`
+
+```java
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * ClassName TopicCustomer
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/1/28 16:50
+ */
+@Component
+public class TopicCustomer {
+
+    /*
+    * 代表一个任意单词
+    # 代表任意个数、任意单词
+     */
+
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(type = "direct", name = "topics"), // 绑定的交换机
+                    key = {"user.save", "user.*"}
+            )
+    })
+    public void receive1(String message) {
+        System.out.println("message1 " + message);
+    }
+
+    @RabbitListener(bindings = {
+            @QueueBinding( // 将队列绑定到交换机
+                    value = @Queue, // 不指定名称产生临时队列
+                    exchange = @Exchange(type = "direct", name = "topics"), // 绑定的交换机
+                    key = {"order.#", "produce.#", "user.*"}
+            )
+    })
+    public void receive2(String message) {
+        System.out.println("message2 " + message);
+    }
+}
 ```
 
