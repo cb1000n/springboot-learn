@@ -1,0 +1,8 @@
+spring:
+  rabbitmq:
+    host: 106.54.139.107
+    port: 5672
+    username: guest
+    password: guest
+    # 虚拟机
+    # virtual-host: /ems
