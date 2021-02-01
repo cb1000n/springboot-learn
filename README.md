@@ -1334,11 +1334,199 @@ public final class RedisUtil {
 
 
 
+# SpringBoot 集成 Security
 
+## 新建`security-learn`模块
 
+![image-20210201150007740](README.assets/image-20210201150007740.png)
 
+![image-20210201150023166](README.assets/image-20210201150023166.png)
 
+![image-20210201150124622](README.assets/image-20210201150124622.png)
 
+![image-20210201150142039](README.assets/image-20210201150142039.png)
+
+![image-20210201150156235](README.assets/image-20210201150156235.png)
+
+红框选中的，是暂时不需要的，干掉
+
+![image-20210201150256742](README.assets/image-20210201150256742.png)
+
+干掉后如图：
+
+![image-20210201150323349](README.assets/image-20210201150323349.png)
+
+## 导入静态资源
+
+```
+welcome.html
+|views
+|level1
+        1.html
+        2.html
+        3.html
+|level2
+        1.html
+        2.html
+        3.html
+|level3
+        1.html
+        2.html
+        3.html
+Login.html
+```
+
+## 引入依赖
+
+```xml
+<!--thymeleaf-extras-springsecurity4 starrt-->
+<!--有了这个整合包，可以在thymeaf中写一些security的操作-->
+<!--使用的时候会报错，springboot 版本太高，最高支持2.0.9，但是2.0.9 UI 丑，而且 junit  都变了-->
+<dependency>
+    <groupId>org.thymeleaf.extras</groupId>
+    <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+    <version>3.0.4.RELEASE</version>
+</dependency>
+<!--thymeleaf-extras-springsecurity4 end-->
+<!--thymeleaf-spring5 start-->
+<dependency>
+    <groupId>org.thymeleaf</groupId>
+    <artifactId>thymeleaf-spring5</artifactId>
+</dependency>
+<!--thymeleaf-spring5 end-->
+<!--thymeleaf-extras-java8time start-->
+<dependency>
+    <groupId>org.thymeleaf.extras</groupId>
+    <artifactId>thymeleaf-extras-java8time</artifactId>
+</dependency>
+<!--thymeleaf-extras-java8time end-->
+<!--security start-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<!--security end-->
+```
+
+核心是`security`包，其他包是辅助测试包
+
+## 配置文件
+
+`application.yml`
+
+```yaml
+# 关闭模板引擎缓存
+spring:
+  thymeleaf:
+    cache: false
+```
+
+## 配置类SecurityConfig
+
+```java
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+/**
+ * ClassName SecurityConfig
+ * Description TODO 类描述
+ *
+ * @author ZhangRenjie
+ * Date  2021/2/1 16:30
+ */
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    // 授权
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // 配置首页所有人可访问，功能也只有对应权限的人才能访问
+        http.authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/level1/**").hasRole("vip1")
+                .antMatchers("/level2/**").hasRole("vip2")
+                .antMatchers("/level3/**").hasRole("vip3");
+
+        // 防止网站攻击 csrf
+        http.csrf().disable();
+        // 配置没有权限跳转登录页
+        http.formLogin();
+        // 开启注销，并跳到昼夜
+        http.logout().logoutSuccessUrl("/");
+
+        // 开启记住我，自定义接收参数
+        http.rememberMe().rememberMeParameter("remember");
+
+        // 定制登录页
+        http.formLogin().loginPage("/toLogin").usernameParameter("user").passwordParameter("pwd").loginProcessingUrl("/login");
+    }
+
+    /*
+    认证
+    springboot 2.1.X 可以直接使用
+    大版本，报错，在 Security 5.0+ 增加了很多加密方式
+     */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                .withUser("test")
+                .password(new BCryptPasswordEncoder().encode("123456"))
+                .roles("vip1","vip2")
+                .and()
+                .withUser("admin")
+                .password(new BCryptPasswordEncoder().encode("123456"))
+                .roles("vip1","vip2", "vip3");
+    }
+}
+```
+
+## 控制器
+
+`RouterController`
+
+```java
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * ClassName RouterController
+ * Description TODO 类描述：跳转路由
+ *
+ * @author ZhangRenjie
+ * Date  2021/2/1 15:30
+ */
+@Controller
+public class RouterController {
+
+    @RequestMapping({"/", "/index"})
+    public String index() {
+        return "index";
+    }
+
+    @RequestMapping("/toLogin")
+    public String toLogin() {
+        return "views/login";
+    }
+
+    @RequestMapping("/level1/{id}")
+    public String level1(@PathVariable("id") int id) {
+        return "views/level1/" + id;
+    }
+
+    @RequestMapping("/level2/{id}")
+    public String level2(@PathVariable("id") int id) {
+        return "views/level2/" + id;
+    }
+
+    @RequestMapping("/level3/{id}")
+    public String level3(@PathVariable("id") int id) {
+        return "views/level3/" + id;
+    }
+}
+```
 
 
 
