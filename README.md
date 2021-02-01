@@ -509,7 +509,14 @@ public class Knife4jConfiguration {
 
 # SpringBoot 集成 Redis
 
+## 服务器准备 docker-redis
 
+```shell
+# 下载redis镜像
+docker pull redis
+# 启动redis
+docker run -d --name xiaoyun_redis -p 6379:6379 redis
+```
 
 ## 新建`redis-learn`模块
 
